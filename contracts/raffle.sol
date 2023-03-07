@@ -2,13 +2,13 @@
 pragma solidity 0.8.9;
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 
 error Raffle_not_Eth();
 error Raffle_TransferFailed();
 error Raffle__NotOpen();
 
-contract Raffle is VRFConsumerBaseV2,KeeperCompatibleInterface {
+contract Raffle is VRFConsumerBaseV2,AutomationCompatibleInterface{
     /* Type declarations */
     enum RaffleState{
         OPEN,
@@ -95,6 +95,7 @@ contract Raffle is VRFConsumerBaseV2,KeeperCompatibleInterface {
         bool hasPlayers = (s_players.length>0);
         bool hasBalance = address(this).balance > 0;
         upkeepNeeded = (isOpen && timePassed && hasPlayers && hasBalance);
+        
 
     }
 
@@ -117,6 +118,8 @@ contract Raffle is VRFConsumerBaseV2,KeeperCompatibleInterface {
         emit RequestRaffleWinner(requestId);
 
     }
+
+    function performUpkeep(bytes calldata /*performData */) external override {}
 
     //we can use modular operator to get random numbers;
     function fulfillRandomWords(uint256 /*requestId*/, uint256[] memory randomWords) internal override
